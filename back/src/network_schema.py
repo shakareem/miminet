@@ -108,6 +108,7 @@ class EdgeData:
         id (str): Unique identifier for the edge.
         source (str) : Label of the source node.(e.g., "host_2")
         target (str): Label of the target node. (e.g., "l1hub1")
+        is_off (bool): marks whether the edge is disabled
 
     """
 
@@ -115,6 +116,7 @@ class EdgeData:
     source: str
     target: str
     loss_percentage: int = 0
+    is_off: bool = False
 
 
 @dataclass

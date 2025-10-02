@@ -334,7 +334,8 @@ const ShowEdgeConfig = function(edge_id, shared = 0){
 
     let edge_source = ed.data.source;
     let edge_target = ed.data.target;
-    let edge_loss = ed.data.loss_percentage || 0
+    let edge_loss = ed.data.loss_percentage || "0"
+    let edge_is_off = ed.data.is_off || "0"
 
     // Create form
     if (shared){
@@ -343,6 +344,8 @@ const ShowEdgeConfig = function(edge_id, shared = 0){
         ConfigEdgeForm(edge_id);
     }
 
+    // Add edge condition info (on/off)
+    ConfigEdgeConditon(edge_is_off)
 
     // Add loss percentage info
     ConfigEdgePercentage(edge_loss)
@@ -709,6 +712,10 @@ const MoveNodes = function(){
 const prepareStylesheet = function() {
     const getColor = function(ele) {
         if (ele.group() === "edges") {
+            const is_off = ele.data('is_off') || false;
+            if (is_off)
+                return '#D9534F';
+
             const loss = ele.data('loss_percentage') || 0;
             if (loss > 0)
                 return '#FF8C00';
