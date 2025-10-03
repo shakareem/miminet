@@ -315,7 +315,7 @@ const ConfigEdgeConditon = function (is_off) {
 
     $('#is_off').val(is_off);
 
-    if (is_off == "1") {
+    if ("1" == is_off) {
         $('#edge_enabled_switch').prop('checked', false);
     } else {
         $('#edge_enabled_switch').prop('checked', true);
