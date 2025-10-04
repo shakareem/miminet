@@ -464,8 +464,7 @@ const AddEdge = function(source_id, target_id){
         let target_node = nodes.find(n => n.data.id === target_id);
 
         // Do we find nodes?
-        if (!source_node || !target_node)
-        {
+        if (!source_node || !target_node) {
             return;
         }
 
@@ -475,45 +474,49 @@ const AddEdge = function(source_id, target_id){
         // Add edge
         let edge_id = EdgeUid();
 
-        edges.push({
+        let edge = {
             data: {
                 id: edge_id,
                 source: source_node.data.id,
                 target: target_node.data.id,
             }
-        });
+        }
 
-        // Add interface If edge connects to host or to router or to server
-        if (source_node.config.type === 'host' || source_node.config.type === 'router' || source_node.config.type === 'server'){
+        edges.push(edge);
+        AddEdgeInterfaces(edge)
+}
+
+const AddEdgeInterfaces = function(ed) {
+    const edge_id = ed.data.id
+
+    for (const node_id of [ed.data.source, ed.data.target]) {
+        let node = nodes.find(t => t.data.id === node_id);
+
+        if (!node) {
+            console.log("We have an edge without target node");
+            continue;
+        }
+
+        if (node.config.type === 'host' || node.config.type === 'router' || node.config.type === 'server'){
             let iface_id = InterfaceUid();
-            source_node.interface.push({
-                  id: iface_id,
-                  name: iface_id,
-                  connect: edge_id,
+            node.interface.push({
+                    id: iface_id,
+                    name: iface_id,
+                    connect: edge_id,
             });
         }
 
-        if (target_node.config.type === 'host' || target_node.config.type === 'router' || target_node.config.type === 'server'){
-            let iface_id = InterfaceUid();
-            target_node.interface.push({
-                id: iface_id,
-                name: iface_id,
-                connect: edge_id,
-            });
-        }
-
-        // Add interface if connected to switch
-        if (target_node.config.type === 'l2_switch'){
+        if (node.config.type === 'l2_switch'){
             var vlan = null;
             var type_connection = null;
 
-            if (areInterfaceFieldsFilled(target_node)) {
+            if (areInterfaceFieldsFilled(node)) {
                 vlan = 1;
                 type_connection = 0;
             }
 
-            let iface_id = l2SwitchPortUid(target_node.data.id);
-            target_node.interface.push({
+            let iface_id = l2SwitchPortUid(node.data.id);
+            node.interface.push({
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
@@ -522,43 +525,15 @@ const AddEdge = function(source_id, target_id){
             });
         }
 
-        if (source_node.config.type === 'l2_switch'){
-            var vlan = null;
-            var type_connection = null;
-
-            if (areInterfaceFieldsFilled(source_node)) {
-                vlan = 1;
-                type_connection = 0;
-            }
-
-            let iface_id = l2SwitchPortUid(source_node.data.id);
-            source_node.interface.push({
-                id: iface_id,
-                name: iface_id,
-                connect: edge_id,
-                vlan: vlan,
-                type_connection: type_connection,
-            });
-        }
-
-        // Add interface if connected to Hub
-        if (target_node.config.type === 'l1_hub'){
-            let iface_id = l1HubPortUid(target_node.data.id);
-            target_node.interface.push({
+        if (node.config.type === 'l1_hub'){
+            let iface_id = l1HubPortUid(node.data.id);
+            node.interface.push({
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
             });
         }
-
-        if (source_node.config.type === 'l1_hub'){
-            let iface_id = l1HubPortUid(source_node.data.id);
-            source_node.interface.push({
-                id: iface_id,
-                name: iface_id,
-                connect: edge_id,
-            });
-        }
+    }
 }
 
 const DeleteJob = function(node_id){
@@ -603,19 +578,19 @@ const DeleteNode = function(node_id) {
         if (edge.data.source === node_id)
         {
             // Find the node on the other side
-            let t = nodes.find(t => t.data.id === edge.data.target);
+            let adjacent_node = nodes.find(t => t.data.id === edge.data.target);
 
-            if (!t){
+            if (!adjacent_node){
                 console.log("We have an edge without target node");
                 return;
             }
 
             // Iterate interface and delete one
-            let new_iface = t.interface.filter(function( iface ) {
-                return iface.connect !== edge.data.id;
+            let new_iface = adjacent_node.interface.filter(function( iface ) {
+                return iface.connect != edge.data.id;
             });
 
-            t.interface = new_iface;
+            adjacent_node.interface = new_iface;
             edges_to_delete.unshift(idx);
             return;
         }
@@ -623,19 +598,19 @@ const DeleteNode = function(node_id) {
         if (edge.data.target === node_id)
         {
             // Find the node on the other side
-            let t = nodes.find(t => t.data.id === edge.data.source);
+            let adjacent_node = nodes.find(t => t.data.id === edge.data.source);
 
-            if (!t){
+            if (!adjacent_node){
                 console.log("We have an edge without target node");
                 return;
             }
 
             // Iterate interface and delete one
-            let new_iface = t.interface.filter(function( iface ) {
-                return iface.connect !== edge.data.id;
+            let new_iface = adjacent_node.interface.filter(function( iface ) {
+                return iface.connect != edge.data.id;
             });
 
-            t.interface = new_iface;
+            adjacent_node.interface = new_iface;
             edges_to_delete.unshift(idx);
             return;
         }
@@ -655,33 +630,33 @@ const DeleteEdge = function (edge_id) {
 
     let ed = edges.find(ed => ed.data.id === edge_id);
 
-    if (!ed){
+    if (!ed) {
         return;
     }
 
-    let connected_nodes = [ed.data.source, ed.data.target];
-    let iterator = connected_nodes.values();
+    DeleteEdgeInterfaces(ed);
 
-    for (let node_id of iterator){
-        let t = nodes.find(t => t.data.id === node_id);
+    // Delete the edge
+    let edge_index = edges.findIndex(prop => prop.data.id === edge_id);
+    edges.splice(edge_index,1);
+}
 
-        if (!t){
+const DeleteEdgeInterfaces = function (ed) {
+    for (const node_id of [ed.data.source, ed.data.target]){
+        let node = nodes.find(t => t.data.id === node_id);
+
+        if (!node){
             console.log("We have an edge without target node");
             continue;
         }
 
         // Iterate interface and delete one
-        let edge_node_iface = t.interface.filter(function( iface ) {
-            return iface.connect !== edge_id;
+        let edge_node_iface = node.interface.filter(function( iface ) {
+            return iface.connect != ed.data.id;
         });
 
-        t.interface = edge_node_iface;
+        node.interface = edge_node_iface;
     }
-
-    // Delete the edeg
-    let edge_index = edges.findIndex(prop => prop.data.id === edge_id);
-    edges.splice(edge_index,1);
-    return;
 }
 
 const PostNodes = function(){
@@ -1074,7 +1049,7 @@ const DrawGraph = function() {
             // Reset network state
             SetNetworkPlayerState(-1);
         }
-        if (e.keyCode ==  46 && selected_edge_id) {
+        if (e.keyCode == 46 && selected_edge_id) {
 
             // Save the network state.
             SaveNetworkObject();
