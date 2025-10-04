@@ -47,6 +47,7 @@ class NodeInterface:
         connect (str): Label of the node the interface connects to (e.g., "l2sw1").
         id (str): Unique identifier for the interface (e.g., "l2sw1_1").
         name (str): Name of the interface (e.g., "l2sw1_1").
+        is_enabled (str): "1" marks that the interface is enabled, "0" - disabled.
         ip (str): IP address (e.g., "10.0.0.1").
         netmask (int): Netmask.
         vlan (Union[int, List[int], None]): VLAN ID or list of VLANs.
@@ -57,6 +58,7 @@ class NodeInterface:
     connect: str
     id: str
     name: str = ""
+    is_enabled: str = "1"
     ip: str = ""
     netmask: int = 0
     vlan: Union[int, list[int], None] = None
@@ -106,9 +108,9 @@ class EdgeData:
 
     Args:
         id (str): Unique identifier for the edge.
-        source (str) : Label of the source node.(e.g., "host_2")
-        target (str): Label of the target node. (e.g., "l1hub1")
-        is_enabled (bool): marks whether the edge is enabled
+        source (str) : Label of the source node.(e.g., "host_2").
+        target (str): Label of the target node. (e.g., "l1hub1").
+        is_enabled (str): "1" marks that the edge is enabled, "0" - disabled.
 
     """
 
@@ -116,7 +118,7 @@ class EdgeData:
     source: str
     target: str
     loss_percentage: int = 0
-    is_enabled: bool = True
+    is_enabled: str = "1"
 
 
 @dataclass

@@ -503,7 +503,7 @@ const AddEdgeInterfaces = function(edge) {
                     id: iface_id,
                     name: iface_id,
                     connect: edge_id,
-                    is_enabled: true,
+                    is_enabled: "1",
             });
         }
 
@@ -521,7 +521,7 @@ const AddEdgeInterfaces = function(edge) {
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
-                is_enabled: true,
+                is_enabled: "1",
                 vlan: vlan,
                 type_connection: type_connection,
             });
@@ -533,7 +533,7 @@ const AddEdgeInterfaces = function(edge) {
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
-                is_enabled: true,
+                is_enabled: "1",
             });
         }
     }

@@ -425,7 +425,7 @@ class EdgeConfigurator(AbstractDeviceConfigurator):
 
     def _update_loss_percentage_and_condition(self):
         loss = int(get_data("edge_loss"))
-        is_enabled = "1" == get_data("is_enabled")
+        is_enabled = get_data("is_enabled")
         edge_id = get_data("edge_id")
 
         for edge in self._json_network["edges"]:
