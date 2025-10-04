@@ -14,15 +14,15 @@
     <div class="form-group pb-2">
         <label for="edge_enabled_switch" class="text-sm">Статус соединения</label>
         <input type="hidden"
-               name="is_off"
-               id="is_off"
-               value="{{ 1 if edge and edge.data and edge.data.is_off else 0 }}">
+               name="is_enabled"
+               id="is_enabled"
+               value="{{ 0 if edge and edge.data and edge.data.is_enabled else 1 }}">
         <div class="form-check form-switch">
             <input class="form-check-input"
                    type="checkbox"
                    role="switch"
                    id="edge_enabled_switch"
-                   {% if not edge or not edge.data or not edge.data.is_off %}checked{% endif %}>
+                   {% if not edge or not edge.data or edge.data.is_enabled %}checked{% endif %}>
         </div>
     </div>
 </script>

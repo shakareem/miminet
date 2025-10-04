@@ -268,16 +268,16 @@ const ConfigEdgeForm = function (edge_id) {
         let data = $('#config_edge_main_form').serialize();
         const edge = edges.find(e => e.data.id === edge_id);
         const lossValue = $("#edge_loss").val();
-        const isOff = $("#is_off").val();
+        const isEnabled = $("#is_enabled").val();
 
         if (edge) {
             edge.data.loss_percentage = lossValue;
-            edge.data.is_off = isOff;
+            edge.data.is_enabled = isEnabled;
 
-            if ("1" == isOff) {
-                DeleteEdgeInterfaces(edge)
-            } else {
+            if ("1" == isEnabled) {
                 AddEdgeInterfaces(edge)
+            } else {
+                DeleteEdgeInterfaces(edge)
             }
         }
 
@@ -311,26 +311,26 @@ const ConfigEdgePercentage = function (edge_loss) {
     $('#edge_loss').val(edge_loss);
 }
 
-const ConfigEdgeConditon = function (is_off) {
+const ConfigEdgeConditon = function (is_enabled) {
 
     var text = document.getElementById('config_edge_save_condition_script').innerHTML;
 
     $(config_edge_main_form_id).prepend(text);
 
-    $('#is_off').val(is_off);
+    $('#is_enabled').val(is_enabled);
 
-    if ("1" == is_off) {
-        $('#edge_enabled_switch').prop('checked', false);
-    } else {
+    if ("1" == is_enabled) {
         $('#edge_enabled_switch').prop('checked', true);
+    } else {
+        $('#edge_enabled_switch').prop('checked', false);
     }
 
     const edgeSwitch = document.getElementById('edge_enabled_switch');
-    const isOff = document.getElementById('is_off');
+    const isEnabled = document.getElementById('is_enabled');
 
-    isOff.value = edgeSwitch.checked ? "0" : "1";
+    isEnabled.value = edgeSwitch.checked ? "1" : "0";
     edgeSwitch.addEventListener('change', () => {
-        isOff.value = edgeSwitch.checked ? "0" : "1";
+        isEnabled.value = edgeSwitch.checked ? "1" : "0";
     });
 }
 

@@ -335,7 +335,7 @@ const ShowEdgeConfig = function(edge_id, shared = 0){
     let edge_source = ed.data.source;
     let edge_target = ed.data.target;
     let edge_loss = ed.data.loss_percentage || 0
-    let edge_is_off = ed.data.is_off || "0"
+    let edge_is_enabled = ed.data.is_enabled || "1"
 
     // Create form
     if (shared){
@@ -345,7 +345,7 @@ const ShowEdgeConfig = function(edge_id, shared = 0){
     }
 
     // Add edge condition info (on/off)
-    ConfigEdgeConditon(edge_is_off)
+    ConfigEdgeConditon(edge_is_enabled)
 
     // Add loss percentage info
     ConfigEdgePercentage(edge_loss)
@@ -497,7 +497,7 @@ const AddEdgeInterfaces = function(ed) {
             continue;
         }
 
-        if (node.config.type === 'host' || node.config.type === 'router' || node.config.type === 'server'){
+        if (node.config.type === 'host' || node.config.type === 'router' || node.config.type === 'server') {
             let iface_id = InterfaceUid();
             node.interface.push({
                     id: iface_id,
@@ -525,7 +525,7 @@ const AddEdgeInterfaces = function(ed) {
             });
         }
 
-        if (node.config.type === 'l1_hub'){
+        if (node.config.type === 'l1_hub') {
             let iface_id = l1HubPortUid(node.data.id);
             node.interface.push({
                 id: iface_id,
@@ -536,7 +536,7 @@ const AddEdgeInterfaces = function(ed) {
     }
 }
 
-const DeleteJob = function(node_id){
+const DeleteJob = function(node_id) {
 
     let jobs_to_delete = [];
 
@@ -546,12 +546,12 @@ const DeleteJob = function(node_id){
             return;
         }
 
-        if (job.host_id === node_id){
+        if (job.host_id === node_id) {
             jobs_to_delete.push(idx);
         }
     });
 
-    $.each(jobs_to_delete, function (idx, val){
+    $.each(jobs_to_delete, function (idx, val) {
         jobs.splice(val, 1);
     });
 }
@@ -687,8 +687,8 @@ const MoveNodes = function(){
 const prepareStylesheet = function() {
     const getColor = function(ele) {
         if (ele.group() === "edges") {
-            const is_off = ele.data('is_off') || "0";
-            if ("1" == is_off)
+            const is_enabled = ele.data('is_enabled') || "1";
+            if ("0" == is_enabled)
                 return '#D9534F';
 
             const loss = ele.data('loss_percentage') || 0;
