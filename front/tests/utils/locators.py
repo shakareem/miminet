@@ -262,6 +262,17 @@ class Location:
                         "#config_server_start_udp_server_port_input_field"
                     )
 
+            class Edge(CommonDevice):
+                MAIN_FORM = Locator("#config_edge_main_form")
+                SOURCE = Locator("#edge_source")
+                TARGET = Locator("#edge_target")
+                LOSS_FIELD = Locator("#edge_loss")
+                IS_ENABLED = Locator("#is_enabled")
+                EDGE_ENABLED_SWITCH = Locator("#edge_enabled_switch")
+                SUBMIT_BUTTON = Locator(
+                    "#config_edge_main_form_submit_button", text="Сохранить"
+                )
+
             # The only stable way for finding ip/subnet mask on page is using XPATHs
 
             @staticmethod

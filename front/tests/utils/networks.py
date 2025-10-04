@@ -119,18 +119,16 @@ class MiminetTestNetwork:
         return NodeConfig(self.__selenium, node)
 
     def open_edge_config(self, edge: dict):
-        """Open configuration menu.
+        """Open configuration menu for the edge.
 
         Args:
             edge (dict): Edge for which the menu opens
-        """
-        self.__check_page()
-        edge_id = edge["data"]["id"]
-        self.__selenium.execute_script(f"ShowEdgeConfig('{edge_id}')")
 
-        self.__selenium.wait_until_appear(
-            By.CSS_SELECTOR, Location.Network.CONFIG_PANEL.selector
-        )
+        Returns:
+            EdgeConfig: An instance of the EdgeConfig class, providing access to the configuration menu.
+        """
+
+        return EdgeConfig(self.__selenium, edge)
 
     def add_node(
         self,
@@ -577,3 +575,92 @@ class NodeConfig:
             raise Exception(
                 f"An error occurred while managing the config panel: {error_msgs}"
             )
+
+class EdgeConfig:
+    """
+    Represents an edge configuration panel.
+    Allows changing packet loss percentage and enabling/disabling the edge.
+    """
+
+    def __init__(self, selenium: MiminetTester, edge: dict):
+        self.__selenium = selenium
+        self.__open_config(edge)
+
+    @property
+    def loss_percentage(self) -> int:
+        """Get current packet loss percentage of the edge."""
+        value = self.__selenium.find_element(
+            By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.LOSS_FIELD.selector
+        ).get_attribute("value")
+
+        return int(value) if value else 0
+
+    def set_loss_percentage(self, value: int):
+        """Set packet loss percentage of the edge."""
+        self.__check_config_open()
+
+        field = self.__selenium.find_element(
+            By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.LOSS_FIELD.selector
+        )
+        field.clear()
+        field.send_keys(str(value))
+
+    @property
+    def is_enabled(self) -> bool:
+        """Return True if the edge is enabled (via switch checkbox)."""
+        is_enabled = self.__selenium.find_element(
+            By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.IS_ENABLED.selector
+        ).get_attribute("value")
+
+        return "1" == is_enabled
+
+    def enable(self):
+        return self.__set_enabled(True)
+
+    def disable(self):
+        return self.__set_enabled(False)
+
+    def __set_enabled(self, enabled: bool):
+        self.__check_config_open()
+
+        checkbox = self.__selenium.find_element(
+            By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.EDGE_ENABLED_SWITCH.selector
+        )
+
+        if checkbox.is_selected() != enabled:
+            checkbox.click()
+
+    def submit(self):
+        """Submit edge configuration."""
+        self.__check_config_open()
+
+        self.__selenium.find_element(
+            By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.SUBMIT_BUTTON.selector
+        ).click()
+
+        self.__selenium.wait_until_text(
+            By.CSS_SELECTOR,
+            Location.Network.ConfigPanel.Edge.SUBMIT_BUTTON.selector,
+            Location.Network.ConfigPanel.Edge.SUBMIT_BUTTON.text,
+            timeout=5,
+        )
+
+    def __open_config(self, edge: dict):
+        edge_id = edge["data"]["id"]
+        self.__selenium.execute_script(f"ShowEdgeConfig('{edge_id}')")
+
+        assert (
+            Location.Network.ConfigPanel.Edge.MAIN_FORM
+        ), 'Unable to open edge config form.'
+
+        self.__selenium.wait_until_appear(
+            By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.MAIN_FORM.selector
+        )
+
+    def __check_config_open(self):
+        try:
+            self.__selenium.find_element(
+                By.CSS_SELECTOR, Location.Network.ConfigPanel.Edge.MAIN_FORM.selector
+            )
+        except NoSuchElementException:
+            raise Exception("Edge config panel isn't open during some operation.")

@@ -37,7 +37,7 @@ class TestNetworkComparator:
             for j, (iface_a, iface_b) in enumerate(
                 zip(node_a["interface"], node_b["interface"])
             ):
-                for key in ("ip", "netmask"):
+                for key in ("ip", "netmask", "is_enabled"):
                     if key in iface_a and iface_a[key] != iface_b.get(key):
                         raise ValueError(
                             f"Node {i}, Interface {j}: {key.capitalize()} mismatch."
@@ -58,6 +58,12 @@ class TestNetworkComparator:
                     raise ValueError(f"Edge {i}: Source mismatch.")
                 if edge_a["data"]["target"] != edge_b["data"]["target"]:
                     raise ValueError(f"Edge {i}: Target mismatch.")
+
+                # fields below are optional to simplify expected jsons
+                for key in ("loss_percentage", "is_enabled"):
+                    if key in edge_a and edge_a[key] != edge_b.get(key):
+                        raise ValueError(f"Edge {i}: {key.capitalize()} mismatch.")
+
             except KeyError as e:
                 raise ValueError(f"Edge {i}: Missing key {e} in edge data.")
 

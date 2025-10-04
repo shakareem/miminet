@@ -66,5 +66,5 @@ class TestRouterCycle(ExpectedLoader):
         config.submit()
 
     def test_cycle(self, selenium: MiminetTester, network: MiminetTestNetwork):
-        assert TestNetworkComparator.compare_nodes(network.nodes, self.expected["nodes"])
-        assert TestNetworkComparator.compare_jobs(network.jobs, self.expected["jobs"])
+        assert TestNetworkComparator.compare_nodes(self.expected["nodes"], network.nodes)
+        assert TestNetworkComparator.compare_jobs(self.expected["jobs"], network.jobs)

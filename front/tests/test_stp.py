@@ -62,6 +62,6 @@ class TestSTP(ExpectedLoader):
         network.delete()
 
     def test_stp(self, selenium: MiminetTester, network: MiminetTestNetwork):
-        assert TestNetworkComparator.compare_nodes(network.nodes, self.expected["nodes"])
-        assert TestNetworkComparator.compare_edges(network.edges, self.expected["edges"])
-        assert TestNetworkComparator.compare_jobs(network.jobs, self.expected["jobs"])
+        assert TestNetworkComparator.compare_nodes(self.expected["nodes"], network.nodes)
+        assert TestNetworkComparator.compare_edges(self.expected["edges"], network.edges)
+        assert TestNetworkComparator.compare_jobs(self.expected["jobs"], network.jobs)
