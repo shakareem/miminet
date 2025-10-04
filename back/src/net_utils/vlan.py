@@ -20,6 +20,8 @@ def setup_vlans(net: IPNet, nodes: list[Node]) -> None:
             add_bridge(switch, node.interface)
 
             for iface in node.interface:
+                if not iface.is_enabled: continue
+
                 vlan = iface.vlan
                 type_connection = iface.type_connection
                 if vlan is not None:

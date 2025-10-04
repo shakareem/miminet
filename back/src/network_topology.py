@@ -133,7 +133,7 @@ class MiminetTopology(IPTopo):
 
         # Add links
         for edge in self.__network.edges:
-            if edge.data.is_off: continue
+            if not edge.data.is_enabled: continue
 
             edge_id = edge.data.id
             source_id = edge.data.source

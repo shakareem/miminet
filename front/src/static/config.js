@@ -266,7 +266,7 @@ const ConfigEdgeForm = function (edge_id) {
         }
 
         let data = $('#config_edge_main_form').serialize();
-        const edge = edges.find(e => e.data.id === edge_id);
+        const edge = edges.find(e => e.data.id == edge_id);
         const lossValue = $("#edge_loss").val();
         const isEnabled = $("#is_enabled").val();
 
@@ -275,9 +275,9 @@ const ConfigEdgeForm = function (edge_id) {
             edge.data.is_enabled = isEnabled;
 
             if ("1" == isEnabled) {
-                AddEdgeInterfaces(edge)
+                enableEdgeInterfaces(edge);
             } else {
-                DeleteEdgeInterfaces(edge)
+                disableEdgeInterfaces(edge);
             }
         }
 
@@ -293,6 +293,27 @@ const ConfigEdgeForm = function (edge_id) {
     }
 
     $('#config_edge_main_form_submit_button, #config_edge_end_form').off('click').on('click', handleEdgeClick);
+}
+
+const enableEdgeInterfaces = edge => setEdgeInterfaces(edge, true)
+const disableEdgeInterfaces = edge => setEdgeInterfaces(edge, false)
+
+const setEdgeInterfaces = function (edge, is_enabled) {
+    for (const node_id of [edge.data.source, edge.data.target]) {
+        let node = nodes.find(t => t.data.id === node_id);
+
+        if (!node) {
+            console.log("We have an edge without target node");
+            continue;
+        }
+
+        for (iface of node.interface) {
+            if (iface.connect == edge.data.id) {
+                iface.is_enabled = is_enabled;
+                break;
+            }
+        }
+    }
 }
 
 const ConfigHubName = function (hostname) {

@@ -326,16 +326,16 @@ const ShowSwitchConfig = function(n, shared = 0){
 
 const ShowEdgeConfig = function(edge_id, shared = 0){
 
-    let ed = edges.find(ed => ed.data.id === edge_id);
+    let edge = edges.find(e => e.data.id === edge_id);
 
-    if (!ed){
+    if (!edge){
         return;
     }
 
-    let edge_source = ed.data.source;
-    let edge_target = ed.data.target;
-    let edge_loss = ed.data.loss_percentage || 0
-    let edge_is_enabled = ed.data.is_enabled || "1"
+    let edge_source = edge.data.source;
+    let edge_target = edge.data.target;
+    let edge_loss = edge.data.loss_percentage || 0
+    let edge_is_enabled = edge.data.is_enabled || "1"
 
     // Create form
     if (shared){
@@ -486,10 +486,10 @@ const AddEdge = function(source_id, target_id){
         AddEdgeInterfaces(edge)
 }
 
-const AddEdgeInterfaces = function(ed) {
-    const edge_id = ed.data.id
+const AddEdgeInterfaces = function(edge) {
+    const edge_id = edge.data.id
 
-    for (const node_id of [ed.data.source, ed.data.target]) {
+    for (const node_id of [edge.data.source, edge.data.target]) {
         let node = nodes.find(t => t.data.id === node_id);
 
         if (!node) {
@@ -503,6 +503,7 @@ const AddEdgeInterfaces = function(ed) {
                     id: iface_id,
                     name: iface_id,
                     connect: edge_id,
+                    is_enabled: true,
             });
         }
 
@@ -520,6 +521,7 @@ const AddEdgeInterfaces = function(ed) {
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
+                is_enabled: true,
                 vlan: vlan,
                 type_connection: type_connection,
             });
@@ -531,6 +533,7 @@ const AddEdgeInterfaces = function(ed) {
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
+                is_enabled: true,
             });
         }
     }
@@ -628,21 +631,21 @@ const DeleteNode = function(node_id) {
 
 const DeleteEdge = function (edge_id) {
 
-    let ed = edges.find(ed => ed.data.id === edge_id);
+    let edge = edges.find(e => e.data.id === edge_id);
 
-    if (!ed) {
+    if (!edge) {
         return;
     }
 
-    DeleteEdgeInterfaces(ed);
+    DeleteEdgeInterfaces(edge);
 
     // Delete the edge
     let edge_index = edges.findIndex(prop => prop.data.id === edge_id);
     edges.splice(edge_index,1);
 }
 
-const DeleteEdgeInterfaces = function (ed) {
-    for (const node_id of [ed.data.source, ed.data.target]){
+const DeleteEdgeInterfaces = function (edge) {
+    for (const node_id of [edge.data.source, edge.data.target]){
         let node = nodes.find(t => t.data.id === node_id);
 
         if (!node){
@@ -652,7 +655,7 @@ const DeleteEdgeInterfaces = function (ed) {
 
         // Iterate interface and delete one
         let edge_node_iface = node.interface.filter(function( iface ) {
-            return iface.connect != ed.data.id;
+            return iface.connect != edge.data.id;
         });
 
         node.interface = edge_node_iface;
