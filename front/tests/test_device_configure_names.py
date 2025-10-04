@@ -4,6 +4,7 @@ from utils.networks import MiminetTestNetwork, NodeType
 
 
 class TestDeviceNameChange:
+
     @pytest.fixture(scope="class")
     def network(self, selenium: MiminetTester):
         network = MiminetTestNetwork(selenium)

@@ -1,0 +1,77 @@
+{
+    "nodes": [
+        {
+            "classes": [
+                "host"
+            ],
+            "config": {
+                "default_gw": "",
+                "label": "host_1",
+                "type": "host"
+            },
+            "data": {
+                "id": "host_1",
+                "label": "host_1"
+            },
+            "interface": [
+                {
+                    "connect": "edge_m3x96snujpyaycfix1",
+                    "id": "iface_86881674",
+                    "ip": "192.168.1.1",
+                    "name": "iface_86881674",
+                    "netmask": 24
+                }
+            ],
+            "position": {
+                "x": 58.537498474121094,
+                "y": 99
+            }
+        },
+        {
+            "classes": [
+                "host"
+            ],
+            "config": {
+                "default_gw": "",
+                "label": "host_2",
+                "type": "host"
+            },
+            "data": {
+                "id": "host_2",
+                "label": "host_2"
+            },
+            "interface": [
+                {
+                    "connect": "edge_m3x96snujpyaycfix1",
+                    "id": "iface_77541826",
+                    "ip": "192.168.1.2",
+                    "name": "iface_77541826",
+                    "netmask": 24
+                }
+            ],
+            "position": {
+                "x": 158.5374984741211,
+                "y": 111
+            }
+        }
+    ],
+    "edges": [
+        {
+            "data": {
+                "id": "edge_m3x96snujpyaycfix1",
+                "source": "host_1",
+                "target": "host_2"
+            }
+        }
+    ],
+    "jobs": [
+        {
+            "id": "c6196d5b58d54d30b2cc98af5e8e9d33",
+            "job_id": 1,
+            "print_cmd": "ping -c 1 192.168.1.2",
+            "arg_1": "192.168.1.2",
+            "level": 0,
+            "host_id": "host_1"
+        }
+    ]
+}

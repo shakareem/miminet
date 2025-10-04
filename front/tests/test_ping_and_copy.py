@@ -1,12 +1,15 @@
 import pytest
+import json
 from conftest import MiminetTester
 from utils.networks import NodeType, MiminetTestNetwork
 from selenium.webdriver.common.by import By
 from utils.locators import Location
 from utils.checkers import TestNetworkComparator
+from utils.expected_loader import ExpectedLoader
 
 
-class TestPingAndCopy:
+class TestPingAndCopy(ExpectedLoader):
+
     @pytest.fixture(scope="class")
     def network(self, selenium: MiminetTester):
         network = MiminetTestNetwork(selenium)
@@ -36,9 +39,9 @@ class TestPingAndCopy:
         network.delete()
 
     def test_ping(self, selenium: MiminetTester, network: MiminetTestNetwork):
-        assert TestNetworkComparator.compare_nodes(network.nodes, self.JSON_NODES)
-        assert TestNetworkComparator.compare_edges(network.edges, self.JSON_EDGES)
-        assert TestNetworkComparator.compare_jobs(network.jobs, self.JOBS)
+        assert TestNetworkComparator.compare_nodes(network.nodes, self.expected["nodes"])
+        assert TestNetworkComparator.compare_edges(network.edges, self.expected["edges"])
+        assert TestNetworkComparator.compare_jobs(network.jobs, self.expected["jobs"])
 
     def test_ping_network_copy(
         self, selenium: MiminetTester, network: MiminetTestNetwork
@@ -67,57 +70,3 @@ class TestPingAndCopy:
 
         copy_network.delete()
         selenium.get(network.url)
-
-    JSON_NODES = [
-        {
-            "classes": ["host"],
-            "config": {"default_gw": "", "label": "host_1", "type": "host"},
-            "data": {"id": "host_1", "label": "host_1"},
-            "interface": [
-                {
-                    "connect": "edge_m3x96snujpyaycfix1",
-                    "id": "iface_86881674",
-                    "ip": "192.168.1.1",
-                    "name": "iface_86881674",
-                    "netmask": 24,
-                }
-            ],
-            "position": {"x": 58.537498474121094, "y": 99},
-        },
-        {
-            "classes": ["host"],
-            "config": {"default_gw": "", "label": "host_2", "type": "host"},
-            "data": {"id": "host_2", "label": "host_2"},
-            "interface": [
-                {
-                    "connect": "edge_m3x96snujpyaycfix1",
-                    "id": "iface_77541826",
-                    "ip": "192.168.1.2",
-                    "name": "iface_77541826",
-                    "netmask": 24,
-                }
-            ],
-            "position": {"x": 158.5374984741211, "y": 111},
-        },
-    ]
-
-    JSON_EDGES = [
-        {
-            "data": {
-                "id": "edge_m3x96snujpyaycfix1",
-                "source": "host_1",
-                "target": "host_2",
-            }
-        }
-    ]
-
-    JOBS = [
-        {
-            "arg_1": "192.168.1.2",
-            "host_id": "host_1",
-            "id": "c6196d5b58d54d30b2cc98af5e8e9d33",
-            "job_id": 1,
-            "level": 0,
-            "print_cmd": "ping -c 1 192.168.1.2",
-        }
-    ]
