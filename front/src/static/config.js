@@ -272,7 +272,7 @@ const ConfigEdgeForm = function (edge_id) {
 
         if (edge) {
             edge.data.loss_percentage = lossValue;
-            edge.data.is_enabled = isEnabled;
+            edge.data.is_enabled = "1" == isEnabled;
 
             if ("1" == isEnabled) {
                 enableEdgeInterfaces(edge);
@@ -338,9 +338,9 @@ const ConfigEdgeConditon = function (is_enabled) {
 
     $(config_edge_main_form_id).prepend(text);
 
-    $('#is_enabled').val(is_enabled);
+    $('#is_enabled').val("1" ? is_enabled : "0");
 
-    if ("1" == is_enabled) {
+    if (is_enabled) {
         $('#edge_enabled_switch').prop('checked', true);
     } else {
         $('#edge_enabled_switch').prop('checked', false);

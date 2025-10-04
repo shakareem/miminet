@@ -334,8 +334,8 @@ const ShowEdgeConfig = function(edge_id, shared = 0){
 
     let edge_source = edge.data.source;
     let edge_target = edge.data.target;
-    let edge_loss = edge.data.loss_percentage || 0
-    let edge_is_enabled = edge.data.is_enabled || "1"
+    let edge_loss = edge.data.loss_percentage ?? 0
+    let edge_is_enabled = edge.data.is_enabled ?? true
 
     // Create form
     if (shared){
@@ -503,7 +503,6 @@ const AddEdgeInterfaces = function(edge) {
                     id: iface_id,
                     name: iface_id,
                     connect: edge_id,
-                    is_enabled: "1",
             });
         }
 
@@ -521,7 +520,6 @@ const AddEdgeInterfaces = function(edge) {
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
-                is_enabled: "1",
                 vlan: vlan,
                 type_connection: type_connection,
             });
@@ -533,7 +531,6 @@ const AddEdgeInterfaces = function(edge) {
                 id: iface_id,
                 name: iface_id,
                 connect: edge_id,
-                is_enabled: "1",
             });
         }
     }
@@ -690,8 +687,8 @@ const MoveNodes = function(){
 const prepareStylesheet = function() {
     const getColor = function(ele) {
         if (ele.group() === "edges") {
-            const is_enabled = ele.data('is_enabled') || "1";
-            if ("0" == is_enabled)
+            const is_enabled = ele.data('is_enabled') ?? true;
+            if (!is_enabled)
                 return '#D9534F';
 
             const loss = ele.data('loss_percentage') || 0;

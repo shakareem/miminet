@@ -19,7 +19,7 @@ def setup_vtep_interfaces(net: IPNet, nodes: list[Node]) -> None:
 
             # Configure VXLAN network interfaces (connection_type == 1)
             for iface in node.interface:
-                if "0" == iface.is_enabled: continue
+                if not iface.is_enabled: continue
 
                 connection_type = iface.vxlan_connection_type
                 target_ips = iface.vxlan_vni_to_target_ip
@@ -29,7 +29,7 @@ def setup_vtep_interfaces(net: IPNet, nodes: list[Node]) -> None:
 
             # Configure VXLAN endpoint interfaces (connection_type == 0)
             for iface in node.interface:
-                if "0" == iface.is_enabled: continue
+                if not iface.is_enabled: continue
 
                 vni = iface.vxlan_vni
                 connection_type = iface.vxlan_connection_type
@@ -115,7 +115,7 @@ def teardown_vtep_bridges(net: "IPNet", nodes: list["Node"]) -> None:
             router = net.get(node.data.id)
 
             for iface in node.interface:
-                if "0" == iface.is_enabled: continue
+                if not iface.is_enabled: continue
 
                 connection_type = iface.vxlan_connection_type
                 target_ips = iface.vxlan_vni_to_target_ip
